@@ -32,12 +32,6 @@ from collections import namedtuple
 from glob import glob
 
 
-if os.name == 'nt':
-    class_path_separator = ';'
-else:
-    class_path_separator = ':'
-
-
 def to_java_compatible_path(path):
     if os.name == 'nt':
         path = path.replace('\\', '/')
@@ -88,7 +82,7 @@ class ManagedZooKeeper(object):
         if not os.path.exists(data_path):
             os.mkdir(data_path)
 
-        with open(config_path, "wb") as config:
+        with open(config_path, "w") as config:
             config.write("""
 tickTime=2000
 dataDir=%s
@@ -114,7 +108,7 @@ syncLimit=2
         with open(os.path.join(data_path, "myid"), "w") as myid_file:
             myid_file.write(str(self.server_info.server_id))
 
-        with open(log4j_path, "wb") as log4j:
+        with open(log4j_path, "w") as log4j:
             log4j.write("""
 # DEFAULT: console appender only
 log4j.rootLogger=INFO, ROLLINGFILE
@@ -158,7 +152,7 @@ log4j.appender.ROLLINGFILE.File=""" + to_java_compatible_path(
                 self.install_path,
                 "build/lib/*.jar")))
 
-        return class_path_separator.join(jars)
+        return os.pathsep.join(jars)
 
     @property
     def address(self):
